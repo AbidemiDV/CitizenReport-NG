@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <title>Citizens Reporting Solution - Bincom Academy</title>
+    <link rel="stylesheet" href="css/custom.css" />
+</head>
+<body>
+    <div class="mobile-shell">
+
+        <!-- Real-Time Push / In-App Notification Banner (Feature 4) -->
+        <div id="notification-banner" class="notification-banner">
+            <div id="notification-text">New Incident Reported!</div>
+            <button onclick="document.getElementById('notification-banner').classList.remove('show')" style="background:none;border:none;color:#94a3b8;font-size:1.1rem;cursor:pointer;">✕</button>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- PAGE 1: HOME - BROWSE ALL & FILTER BY CATEGORY (Features 2,3,5) -->
+        <!-- ============================================================== -->
+        <div class="app-page" data-page="home">
+            <div class="app-topbar">
+                <div>
+                    <div class="app-title">🛡️ CitizenReport NG</div>
+                    <div class="app-subtitle">Live Community Incident Reporting</div>
+                </div>
+                <button class="top-btn" onclick="App.load('report')">+ Report</button>
+            </div>
+
+            <div class="app-content">
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-num" id="stat-total">3</div>
+                        <div class="stat-lbl">Total Reports</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num" id="stat-mine">1</div>
+                        <div class="stat-lbl">My Reports</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num" style="color:#16a34a;">LIVE</div>
+                        <div class="stat-lbl">Server Sync</div>
+                    </div>
+                </div>
+
+                <!-- Feature 5: Browse Incidents by Categories -->
+                <div class="category-scroll">
+                    <button class="cat-pill active" data-cat="All">All Incidents</button>
+                    <button class="cat-pill" data-cat="Accident">🚗 Accident</button>
+                    <button class="cat-pill" data-cat="Fighting">🥊 Fighting</button>
+                    <button class="cat-pill" data-cat="Rioting">📢 Rioting</button>
+                    <button class="cat-pill" data-cat="Robbery">🚨 Robbery</button>
+                    <button class="cat-pill" data-cat="Fire">🔥 Fire Outbreak</button>
+                </div>
+
+                <!-- Feature 2 & 3: Live Feed of Submitted Incidents -->
+                <div id="incidents-feed"></div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- PAGE 2: ADD NEW INCIDENT (Features 1, 3, 4, 6, 7)              -->
+        <!-- ============================================================== -->
+        <div class="app-page" data-page="report">
+            <div class="app-topbar">
+                <div>
+                    <div class="app-title">📢 Report New Incident</div>
+                    <div class="app-subtitle">Broadcast alert to all app users</div>
+                </div>
+                <button class="top-btn" onclick="App.load('home')">Cancel</button>
+            </div>
+
+            <div class="app-content">
+                <form id="report-form" class="form-card">
+                    <div class="form-group">
+                        <label class="form-label">Incident Title *</label>
+                        <input type="text" id="inc-title" class="form-input" placeholder="e.g. Broken Down Tanker at Third Mainland Bridge" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Incident Category *</label>
+                        <select id="inc-category" class="form-select">
+                            <option value="Accident">Accident</option>
+                            <option value="Fighting">Fighting</option>
+                            <option value="Rioting">Rioting</option>
+                            <option value="Robbery">Robbery</option>
+                            <option value="Fire">Fire Outbreak</option>
+                        </select>
+                    </div>
+
+                    <!-- Feature 6: Geolocation, Longitude & Latitude -->
+                    <div class="form-group">
+                        <label class="form-label">Location & GPS Coordinates *</label>
+                        <input type="text" id="inc-location" class="form-input" placeholder="Street / Landmark (e.g. Lekki Toll Gate, Lagos)" required />
+                        <div id="gps-status" class="gps-box">Acquiring GPS coordinates...</div>
+                        <button type="button" id="btn-get-gps" class="btn btn-outline" style="margin-top:8px; padding:8px 12px; font-size:0.8rem;">
+                            📍 Refresh GPS Longitude & Latitude
+                        </button>
+                    </div>
+
+                    <!-- Feature 7: Pictures of the Incident -->
+                    <div class="form-group">
+                        <label class="form-label">Picture of the Incident *</label>
+                        <input type="file" id="incident-photo-input" accept="image/*" style="display:none;" />
+                        <button type="button" id="btn-cordova-camera" class="btn btn-outline">
+                            📷 Capture Photo / Choose Picture
+                        </button>
+                        <img id="photo-preview" class="photo-preview" alt="Preview" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Incident Details / Description *</label>
+                        <textarea id="inc-desc" rows="3" class="form-textarea" placeholder="Describe what happened, severity, and emergency needs..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        🚀 Submit & Publish Incident Now
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- PAGE 3: MY SUBMITTED INCIDENTS (Feature 8)                     -->
+        <!-- ============================================================== -->
+        <div class="app-page" data-page="my-incidents">
+            <div class="app-topbar">
+                <div>
+                    <div class="app-title">👤 My Submitted Incidents</div>
+                    <div class="app-subtitle">Logged-in Citizen Reporter Dashboard</div>
+                </div>
+                <button class="top-btn" id="btn-switch-user">Account / WP</button>
+            </div>
+
+            <div class="app-content">
+                <div class="form-card" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div id="current-user-box"></div>
+                    <span class="badge badge-Accident" style="background:#dcfce7; color:#166534;">Verified</span>
+                </div>
+
+                <h4 style="font-size:0.85rem; color:#475569; margin-bottom:10px; text-transform:uppercase;">Incidents Reported By You</h4>
+                <div id="my-incidents-feed"></div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- PAGE 4: LOGIN & WORDPRESS BACKEND SETTINGS (Feature 8 + WP)    -->
+        <!-- ============================================================== -->
+        <div class="app-page" data-page="login">
+            <div class="app-topbar">
+                <div>
+                    <div class="app-title">🔐 Citizen Login & Server</div>
+                    <div class="app-subtitle">Authenticate to track your submissions</div>
+                </div>
+                <button class="top-btn" onclick="App.load('home')">Back</button>
+            </div>
+
+            <div class="app-content">
+                <form id="login-form" class="form-card">
+                    <h3 style="font-size:1rem; margin-bottom:12px;">Citizen Reporter Login</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="login-name" class="form-input" placeholder="Bakare Ganiu Abidemi" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="ganiubakare366@gmail.com" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password / PIN</label>
+                        <input type="password" class="form-input" value="123456" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In & View My Incidents</button>
+                </form>
+
+                <div class="form-card">
+                    <h3 style="font-size:0.95rem; margin-bottom:6px;">WordPress Backend Server (Optional)</h3>
+                    <p style="font-size:0.78rem; color:#64748b; margin-bottom:12px;">
+                        By default, incidents sync immediately to the built-in store. To also publish each incident as a WordPress Post via WP REST API, enter your site details below:
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label">WordPress Site URL</label>
+                        <input type="url" id="wp-url" class="form-input" placeholder="https://your-site.wordpress.com" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">WP Username</label>
+                        <input type="text" id="wp-user" class="form-input" placeholder="admin" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">WP Application Password</label>
+                        <input type="password" id="wp-pass" class="form-input" placeholder="xxxx xxxx xxxx xxxx" />
+                    </div>
+                    <button type="button" id="btn-save-wp" class="btn btn-outline">Save WordPress Server Config</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- PAGE 5: INCIDENT FULL DETAILS                                  -->
+        <!-- ============================================================== -->
+        <div class="app-page" data-page="detail">
+            <div class="app-topbar">
+                <div class="app-title">📋 Incident Report Details</div>
+                <button class="top-btn" id="btn-back-home">← Back</button>
+            </div>
+            <div class="app-content">
+                <div class="incident-card" style="cursor:default;">
+                    <img id="detail-img" class="incident-img" style="height:230px;" src="" alt="Incident" />
+                    <div class="incident-body">
+                        <div class="incident-meta-top">
+                            <span id="detail-cat" class="badge badge-Accident">Category</span>
+                            <span id="detail-time" class="incident-time">Time</span>
+                        </div>
+                        <h2 id="detail-title" class="incident-title" style="font-size:1.15rem;"></h2>
+                        <p id="detail-desc" class="incident-desc" style="font-size:0.92rem; margin:12px 0;"></p>
+                        <div class="gps-box" style="margin-bottom:10px;">
+                            <strong>📍 Geolocation Coordinates:</strong><br/>
+                            <span id="detail-loc"></span>
+                        </div>
+                        <div class="incident-footer">
+                            <span><strong>Reported By:</strong> <span id="detail-reporter"></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Persistent Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="home" onclick="App.load('home')">
+                <span class="nav-icon">🏠</span>
+                <span>All Feed</span>
+            </button>
+            <button class="nav-item" data-target="report" onclick="App.load('report')">
+                <span class="nav-icon">➕</span>
+                <span>Report</span>
+            </button>
+            <button class="nav-item" data-target="my-incidents" onclick="App.load('my-incidents')">
+                <span class="nav-icon">👤</span>
+                <span>My Reports</span>
+            </button>
+            <button class="nav-item" data-target="login" onclick="App.load('login')">
+                <span class="nav-icon">⚙️</span>
+                <span>Login / WP</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Cordova & App.js Scripts -->
+    <script src="cordova.js"></script>
+    <script src="js/app.min.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
